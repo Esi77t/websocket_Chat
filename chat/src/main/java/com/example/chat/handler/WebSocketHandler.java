@@ -65,5 +65,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sessions.remove(sessionId);
 
         final Message message = new Message();
+        message.closeConnect();
+        message.setSender(sessionId);
+
+        sessions.values().forEach(s -> {
+            try {
+                s.sendMessage(new TextMessage(message.toString()));
+            } catch (Exception e) {
+                // TODO: throw
+            }
+        });
+    }
+
+    // 통신 에러
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        super.handleTransportError(session, exception);
     }
 }
